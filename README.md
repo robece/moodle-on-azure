@@ -2,9 +2,9 @@
 
 This exercise supports:
 
-MariaDB: 10.5.4
-MySQL: 5.7
-Moodle: 3.9.1 (3-debian-10)
+- MariaDB: 10.5.4
+- MySQL: 5.7
+- Moodle: 3.9.1 (3-debian-10)
 
 Steps:
 
