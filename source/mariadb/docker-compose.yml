@@ -7,9 +7,9 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MARIADB_ROOT_PASSWORD='[database root password]'
-      - MARIADB_USER='[database user]'
-      - MARIADB_PASSWORD='[database password]'
-      - MARIADB_DATABASE='[database name]'
+      - MARIADB_ROOT_PASSWORD=[database root password]
+      - MARIADB_USER=[database user]
+      - MARIADB_PASSWORD=[database password]
+      - MARIADB_DATABASE=[database name]
     volumes:
-      - .\volume\mariadb:/bitnami
+      - .\volume\mariadb:/bitnami/mariadb
