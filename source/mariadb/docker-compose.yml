@@ -3,7 +3,7 @@ version: '2.4'
 services:
   mariadb-server:
     image: bitnami/mariadb:10.5.4
-    hostname: mariadb-server
+    hostname: mariadb
     ports:
       - 3306:3306
     environment:
