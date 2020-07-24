@@ -3,7 +3,7 @@ version: '2.4'
 services:
   mariadb-server:
     image: bitnami/mysql:5.7
-    hostname: mysql-server
+    hostname: mysql
     ports:
       - 3306:3306
     environment:
