@@ -7,9 +7,9 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD='[database root password]'
-      - MYSQL_USER='[database user]'
-      - MYSQL_PASSWORD='[database password]'
-      - MYSQL_DATABASE='[database name]'
+      - MYSQL_ROOT_PASSWORD=[database root password]
+      - MYSQL_USER=[database user]
+      - MYSQL_PASSWORD=[database password]
+      - MYSQL_DATABASE=[database name]
     volumes:
-      - .\volume\mysql:/bitnami
+      - .\volume\mysql:/bitnami/mysql
