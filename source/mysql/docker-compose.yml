@@ -1,7 +1,7 @@
 version: '2.4'
 
 services:
-  mariadb-server:
+  mysql:
     image: bitnami/mysql:5.7
     hostname: mysql
     ports:
