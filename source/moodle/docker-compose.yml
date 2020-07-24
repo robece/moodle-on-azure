@@ -1,0 +1,40 @@
+version: '2.4'
+
+services:
+  moodle-server:
+    #image: bitnami/moodle:3-debian-10
+    build:
+      context: 3-debian-10
+      dockerfile: Dockerfile
+    hostname: moodle-server
+    environment:
+    
+      # Debug and tracing
+      - NAMI_DEBUG='--log-level=trace'
+
+       # Database
+      - MOODLE_DATABASE_TYPE='mysqli' # set mariadb or mysqli
+      - MARIADB_HOST='[host]'
+      - MARIADB_PORT_NUMBER='3306'
+
+      - MOODLE_DATABASE_NAME='[database name]'
+      - MOODLE_DATABASE_USER='[database user]'
+      - MOODLE_DATABASE_PASSWORD='[database password]'
+
+      # User and Site Configuration
+      - MOODLE_SITE_NAME='[moodle site name]'
+      - MOODLE_EMAIL='[moodle email]'
+      - MOODLE_USERNAME='[moodle username]'
+      - MOODLE_PASSWORD='[moodle password]'
+
+      # PHP Environment Variables
+      - PHP_MEMORY_LIMIT='500M'
+
+      # Installation (set no for first time database configuration, yes to connect to previously configured database)
+      - MOODLE_SKIP_INSTALL='no'
+    ports:
+      - 8080:8080
+      - 8443:8443
+    volumes:
+      - .\volume\moodle:/bitnami/moodle
+      - .\volume\moodledata:/bitnami/moodledata

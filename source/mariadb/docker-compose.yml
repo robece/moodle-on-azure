@@ -1,0 +1,15 @@
+version: '2.4'
+
+services:
+  mariadb-server:
+    image: bitnami/mariadb:10.5.4
+    hostname: mariadb-server
+    ports:
+      - 3306:3306
+    environment:
+      - MARIADB_ROOT_PASSWORD='[database root password]'
+      - MARIADB_USER='[database user]'
+      - MARIADB_PASSWORD='[database password]'
+      - MARIADB_DATABASE='[database name]'
+    volumes:
+      - .\volume\mariadb:/bitnami
