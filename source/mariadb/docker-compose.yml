@@ -1,7 +1,7 @@
 version: '2.4'
 
 services:
-  mariadb-server:
+  mariadb:
     image: bitnami/mariadb:10.5.4
     hostname: mariadb
     ports:
