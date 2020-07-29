@@ -2,10 +2,10 @@ version: '2.4'
 
 services:
   moodle:
-    #image: bitnami/moodle:3-debian-10
-    build:
-      context: 3-debian-10
-      dockerfile: Dockerfile
+    image: bitnami/moodle:3-debian-10
+    #build:
+    #  context: 3-debian-10
+    #  dockerfile: Dockerfile
     hostname: moodle
     environment:
     

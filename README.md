@@ -9,13 +9,14 @@ This exercise supports:
 Steps:
 
 1. Create database and user in database (mysql or mariadb) then assign permissions.
+https://docs.moodle.org/39/en/Installation_quick_guide
 
 ```
-create database moodledb;
-grant all on moodledb.* to moodleuser@'%' identified by "Password.123";
+CREATE DATABASE moodle DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,CREATE TEMPORARY TABLES,DROP,INDEX,ALTER ON moodle.* TO 'moodleuser'@'%' IDENTIFIED BY 'Password.123';
 flush privileges;
 ```
 
-2. Configure docker-compose file.
+2. Configure docker-compose file or AKS helm chart command.
 
-3. Run docker-compose file.
+3. Run docker-compose file or AKS helm chart command.
