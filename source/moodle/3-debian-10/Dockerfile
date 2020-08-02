@@ -71,6 +71,20 @@ ENV ALLOW_EMPTY_PASSWORD="no" \
     SMTP_PROTOCOL="" \
     SMTP_USER=""
 
+# begin - redis configuration
+RUN apt-get update -y
+RUN apt-get install php-pear -y
+RUN apt install php-dev -y
+RUN pear config-set php_ini /opt/bitnami/php/lib/php.ini
+RUN pecl install redis
+# end - redis configuration
+
+# begin - copy custom files to be installed
+WORKDIR /custom
+RUN apt-get install rsync -y
+ADD /custom/moodle moodle 
+# end - copy custom files to be installed
+
 EXPOSE 8080 8443
 
 USER root

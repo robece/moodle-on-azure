@@ -5,7 +5,7 @@ metadata:
   namespace: moodle
 spec:
   accessModes:
-  - ReadWriteMany
+  - ReadWriteOnce
   storageClassName: azurefile
   resources:
     requests:

@@ -178,6 +178,9 @@ EOF
         warn "Skipping cron configuration for Moodle because of running as a non-root user"
     fi
 
+    info "Applying Moodle's patch for Azure custom configuration"
+    rsync -r -i /custom/moodle/* ${MOODLE_DATA_DIR}
+
     # Avoid exit code of previous commands to affect the result of this function
     true
 }
