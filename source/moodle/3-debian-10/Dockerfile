@@ -82,8 +82,12 @@ RUN pecl install redis
 # begin - copy custom files to be installed
 WORKDIR /custom
 RUN apt-get install rsync -y
-ADD /custom/moodle moodle 
+ADD /custom/moodle moodle
 # end - copy custom files to be installed
+
+# begin - added daemon to root group to give grants for nfs4 volume
+RUN usermod -G root daemon
+# end - added daemon to root group to give grants for nfs4 volume
 
 EXPOSE 8080 8443
 

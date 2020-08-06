@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: moodle
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+        command:
+        - "/bin/sh"
+        - "-c"
+        - while true; do echo $(date) >> /bitnami/outfile; sleep 1; done
+        volumeMounts:
+            - name: disk01
+              mountPath: /bitnami
+      volumes:
+      - name: disk01
+        persistentVolumeClaim:
+          claimName: pvc-nfs
