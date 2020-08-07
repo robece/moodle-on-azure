@@ -2,7 +2,7 @@ version: '2.4'
 
 services:
   moodle:
-    image: bitnami/moodle:3-debian-10
+    image: robecehub/moodle:1.0.38
     #build:
     #  context: 3-debian-10
     #  dockerfile: Dockerfile
@@ -14,21 +14,21 @@ services:
 
        # Database
       - MOODLE_DATABASE_TYPE=mysqli # set mariadb or mysqli
-      - MARIADB_HOST=[database host]
-      - MARIADB_PORT_NUMBER='3306'
+      - MARIADB_HOST=moodledb02.mysql.database.azure.com
+      - MARIADB_PORT_NUMBER=3306
 
-      - MOODLE_DATABASE_NAME=[database name]
-      - MOODLE_DATABASE_USER=[database user]
-      - MOODLE_DATABASE_PASSWORD=[database password]
+      - MOODLE_DATABASE_NAME=moodle
+      - MOODLE_DATABASE_USER=moodleuser
+      - MOODLE_DATABASE_PASSWORD=Password.123
 
       # User and Site Configuration
-      - MOODLE_SITE_NAME=[moodle site name]
-      - MOODLE_EMAIL=[moodle email]
-      - MOODLE_USERNAME=[moodle username]
-      - MOODLE_PASSWORD=[moodle password]
+      - MOODLE_SITE_NAME=NewSite
+      - MOODLE_EMAIL=user@email.com
+      - MOODLE_USERNAME=admin
+      - MOODLE_PASSWORD=Password.123
 
       # PHP Environment Variables
-      - PHP_MEMORY_LIMIT=500M
+      - PHP_MEMORY_LIMIT=250M
 
       # Installation (set no for first time database configuration, yes to connect to previously configured database)
       - MOODLE_SKIP_INSTALL=no
