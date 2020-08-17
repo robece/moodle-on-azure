@@ -15,25 +15,41 @@ Versions used in this repository:
 - MySQL: 5.7
 - Moodle: 3.9.1 (3.9.1-debian-10-r17)
 
-# Using Virtual Machine scale sets
+## Configuring database 
+
+- Create the Azure Database for MySQL resource and then create a database and user in database to assign permissions.
+  - Reference: https://docs.moodle.org/39/en/Installation_quick_guide
+  
+    Reference:
+    ```
+    CREATE DATABASE moodle DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    GRANT ALL ON moodle.* TO 'moodleuser'@'%' IDENTIFIED BY 'Password.123';
+    flush privileges;
+    ```
+
+## Configuring Redis cache
+
+- The custom Moodle image that is in this repo is prepared to use Redis cache, for this you need to create the resource Azure Cache for Redis and use the credentials inside of the file config.php.
+
+- There are two places were you need to set configuration, one is in the code of config.php and second is in the plugin->cache configuration where you need to register the redis service.
+
+## Preparing Container Image
+
+- It's possible to use the Dockerfile: https://github.com/robece/moodle-on-azure/blob/master/source/moodle/3.9.1-debian-10-r17/Dockerfile.
+  - This file is configured to automatically install PHP-Redis, add custom files to the installation and grant permissions to use NFS mounted devices.
+  
+- There is a patch feature in the libmoodle.sh file to paste all the Moodle custom files: https://github.com/robece/moodle-on-azure/blob/master/source/moodle/3.9.1-debian-10-r17/rootfs/opt/bitnami/scripts/libmoodle.sh#L181.
+  - This will help us to modify the resources any time the application is installed by the first time.
+
+- After configure the container settings a new image will need to be push in the container registry (Dockerhub or Azure Container Registry) that will be used by the Virtual Machine or Kubernetes Service to download the image.
+
+Note: If you don't know the right settings for the container try to run locally withe the Bitnami parameters.
+
+## Preparing Virtual Machine image for Virtual Machine scale set
 
 <div style="text-align:center">
     <img src="/resources/vmss-architecture.png" width="800" />
 </div>
-
-## Preparing Container Image
-
-- It's possible to use the Dockerfile: https://github.com/robece/moodle-on-azure/blob/master/source/moodle/3.9.1-debian-10-r17/Dockerfile
-  - This file is configured to automatically install PHP-Redis, add custom files to the installation and grant permissions to use NFS mounted devices.
-  
-- There is a patch feature in the libmoodle.sh file to paste all the Moodle custom files: https://github.com/robece/moodle-on-azure/blob/master/source/moodle/3.9.1-debian-10-r17/rootfs/opt/bitnami/scripts/libmoodle.sh#L181
-  - This will help us to modify the resources any time the application is installed by the first time.
-
-- After configure the container settings and deployed successfully, a new image will need to be push in the container registry (Dockerhub or Azure Container Registry) that will be used by the Virtual Machine to download the image.
-
-Note: If you don't know the right settings for the container try to run locally withe the Bitnami parameters.
-
-## Preparing Virtual Machine image
 
 - Create an Azure Virtual Network resource.
   - This virtual network will be use to connect all the resources like: VM, VMSS and Netpp.
@@ -66,17 +82,28 @@ Note: If you don't know the right settings for the container try to run locally 
 - Once everything is working as expected, go to Azure Portal and shutdown the Virtual Machine, then create an image of the Virtual Machine.
   - This image will be use to create a new Virtual Machine scale set resource.
   
-Steps:
+## Preparing to deploy in AKS
 
-1. Create database and user in database (mysql or mariadb) then assign permissions.
-https://docs.moodle.org/39/en/Installation_quick_guide
+<div style="text-align:center">
+    <img src="/resources/aks-architecture.png" width="800" />
+</div>
 
-```
-CREATE DATABASE moodle DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-GRANT ALL ON moodle.* TO 'moodleuser'@'%' IDENTIFIED BY 'Password.123';
-flush privileges;
-```
+- Create the Azure Kubernetes Service resource.
 
-2. Configure docker-compose file or AKS helm chart command.
+- Create an Azure NetApp Files resource.
+  - This storage resource will be use to share the Moodle application files between machines.
+  
+- Create the Azure NetApp Files resource capacity pool and volume using the same Azure Kubernetes Service virtual network.
+  - Azure NetApp Files volume will be used as a mounted device in the Azure Virtual Machine.
+  
+- Create the persistent volument and persistent volume claim resources.
+  - There is a sample reference here: https://github.com/robece/moodle-on-azure/blob/master/source/aks/deployment-netapp-volume.yml.
 
-3. Run docker-compose file or AKS helm chart command.
+- Create the horizontal pod autoscaling resource.
+  - There is a sample reference here: https://github.com/robece/moodle-on-azure/blob/master/source/aks/deployment-hpa.yml.
+
+- Deploy the Moodle custom image by using the Bitnami Helm chart.
+  - There is a sample reference here: 
+      ```
+      helm upgrade --install moodle bitnami/moodle --set image.repository=robecehub/moodle --set image.tag=1.0.38 --set replicaCount=1 --namespace=moodle --set externalDatabase.host=moodledb02.mysql.database.azure.com --set externalDatabase.port=3306 --set externalDatabase.database=moodle --set externalDatabase.user=moodleuser --set externalDatabase.password=Password.123 --set moodleSkipInstall=yes --set mariadb.enabled=false --set moodleUsername=admin --set moodlePassword=Password.123 --set moodleEmail=robece@protonmail.com --set nodeSelector\.kubernetes\.io/os=linux --set service.type=LoadBalancer --set extraEnvVars[0].name=MOODLE_DATABASE_TYPE --set extraEnvVars[0].value=mysqli --set livenessProbe.enabled=false --set readinessProbe.enabled=false --set persistence.enabled=true --set persistence.existingClaim=pvc-nfs
+      ```
